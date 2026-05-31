@@ -390,6 +390,10 @@ This solution's behavior **may vary** depending on your car's Android Auto imple
 - If manual reactivation needed, what method (tap icon, press button, etc.)
 - Any specific behaviors or issues encountered
 
+📊 **See the [Vehicle Compatibility Database](docs/compatibility.md)** for community-reported test results on different vehicles.
+
+If you test this solution on your vehicle, please [contribute your results](docs/compatibility.md#how-to-contribute)!
+
 ---
 
 ## Known Limitations

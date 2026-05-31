@@ -36,11 +36,18 @@ The solution works as follows:
 
 If you want to jump straight in, ready-to-use example files are available in the [`examples/`](examples/) directory:
 
+**Core files (required):**
 - **[scripts.yaml](examples/scripts.yaml)** - Complete TTS script ready to copy-paste
 - **[shell_commands.yaml](examples/shell_commands.yaml)** - Shell command for TTS API call
-- **[automations/fuel_alert.yaml](examples/automations/fuel_alert.yaml)** - Example automation with multi-threshold fuel alerts
 
-**⚠️ Remember to replace all placeholders** (`YOUR_PHONE`, `YOUR_EXTERNAL_URL`, `YOUR_LONG_LIVED_TOKEN`, `YOUR_FUEL_LEVEL_SENSOR`) with your actual values before using these files.
+**Example automations:**
+- **[automations/fuel_alert.yaml](examples/automations/fuel_alert.yaml)** - Simple multi-threshold fuel alerts with TTS
+- **[automations/fuel_alert_with_station.yaml](examples/automations/fuel_alert_with_station.yaml)** - Advanced: fuel alerts with automatic station search and route sending
+
+**Advanced scripts:**
+- **[find_best_fuel_station.yaml](examples/find_best_fuel_station.yaml)** - Fuel station finder with TTS announcement and route sending to car (uses French [prix_carburant](https://github.com/Aohzan/hass-prixcarburant) integration by Aohzan - adaptable for other countries)
+
+**⚠️ Remember to replace all placeholders** (`YOUR_PHONE`, `YOUR_EXTERNAL_URL`, `YOUR_LONG_LIVED_TOKEN`, `YOUR_FUEL_LEVEL_SENSOR`, `YOUR_CAR_VIN`, `DRIVER`) with your actual values before using these files.
 
 For detailed step-by-step setup with validation tests, continue reading below.
 

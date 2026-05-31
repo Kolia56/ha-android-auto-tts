@@ -32,6 +32,20 @@ The solution works as follows:
 
 ---
 
+## Quick Start with Examples
+
+If you want to jump straight in, ready-to-use example files are available in the [`examples/`](examples/) directory:
+
+- **[scripts.yaml](examples/scripts.yaml)** - Complete TTS script ready to copy-paste
+- **[shell_commands.yaml](examples/shell_commands.yaml)** - Shell command for TTS API call
+- **[automations/fuel_alert.yaml](examples/automations/fuel_alert.yaml)** - Example automation with multi-threshold fuel alerts
+
+**⚠️ Remember to replace all placeholders** (`YOUR_PHONE`, `YOUR_EXTERNAL_URL`, `YOUR_LONG_LIVED_TOKEN`, `YOUR_FUEL_LEVEL_SENSOR`) with your actual values before using these files.
+
+For detailed step-by-step setup with validation tests, continue reading below.
+
+---
+
 ## Step-by-Step Installation with Validation Tests
 
 ### Step 1: Install Piper TTS Add-on

@@ -1,0 +1,77 @@
+# ============================================================================
+# Automation: Multi-threshold Fuel Alert with Station Recommendation
+# ============================================================================
+#
+# This automation triggers different strategies based on remaining fuel level:
+# - Below 30%: Search for cheapest station within 30km radius
+# - Below 20%: Search for cheapest station within 20km radius
+# - Below 10%: Search for closest station within 10km radius (priority: distance)
+#
+# WORKFLOW:
+# 1. Fuel level threshold crossed
+# 2. TTS announcement: "Fuel level has reached X%"
+# 3. Search for best station based on strategy (price or distance)
+# 4. TTS announcement: "[City], station [Brand] [cheapest/closest] found 
+#    at X km, price per liter X,XX euros"
+# 5. Route sent to car navigation
+#
+# DEPENDENCIES:
+# - script.tts_android_auto_vlc
+# - script.find_best_fuel_station
+# - A fuel level sensor (replace YOUR_FUEL_LEVEL_SENSOR)
+# - prix_carburant integration (French) or equivalent for your country
+#
+# ============================================================================
+
+- alias: "⛽ Auto Send Station Based on Fuel Level"
+  id: fuel_alert_with_station
+  mode: queued
+  max: 3
+  trigger:
+    # Trigger at 30% (still some autonomy, optimize for price, larger radius)
+    - platform: template
+      id: "30"
+      value_template: >
+        {% set fuel = states('sensor.YOUR_FUEL_LEVEL_SENSOR') | float(100) %}
+        {{ fuel < 30 and fuel >= 20 }}
+    
+    # Trigger at 20% (getting low, still optimize for price but smaller radius)
+    - platform: template
+      id: "20"
+      value_template: >
+        {% set fuel = states('sensor.YOUR_FUEL_LEVEL_SENSOR') | float(100) %}
+        {{ fuel < 20 and fuel >= 10 }}
+    
+    # Trigger at 10% (critical, prioritize closest station regardless of price)
+    - platform: template
+      id: "10"
+      value_template: >
+        {% set fuel = states('sensor.YOUR_FUEL_LEVEL_SENSOR') | float(100) %}
+        {{ fuel < 10 }}
+  
+  action:
+    # Configuration: strategy and search radius per fuel level
+    - variables:
+        config:
+          "30":
+            strategy: "price"
+            radius: 30
+          "20":
+            strategy: "price"
+            radius: 20
+          "10":
+            strategy: "distance"
+            radius: 10
+    
+    # Step 1: Announce fuel level via TTS
+    # French example - adapt for your language
+    - action: script.tts_android_auto_vlc
+      data:
+        message: "Le niveau de carburant a atteint {{ trigger.id }} %"
+        # English equivalent: "Fuel level has reached {{ trigger.id }} percent"
+    
+    # Step 2: Find best station and send route based on strategy
+    - action: script.find_best_fuel_station
+      data:
+        strategy: "{{ config[trigger.id].strategy }}"
+        radius: "{{ config[trigger.id].radius }}"

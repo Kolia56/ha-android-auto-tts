@@ -34,18 +34,20 @@ The solution works as follows:
 
 ## Quick Start with Examples
 
-If you want to jump straight in, ready-to-use example files are available in the [`examples/`](examples/) directory:
+Ready-to-use example files are organized in the [`examples/`](examples/) directory:
 
-**Core files (required):**
-- **[scripts.yaml](examples/scripts.yaml)** - Complete TTS script ready to copy-paste
-- **[shell_commands.yaml](examples/shell_commands.yaml)** - Shell command for TTS API call
+### Core files (required for any use case)
 
-**Example automations:**
-- **[automations/fuel_alert.yaml](examples/automations/fuel_alert.yaml)** - Simple multi-threshold fuel alerts with TTS
-- **[automations/fuel_alert_with_station.yaml](examples/automations/fuel_alert_with_station.yaml)** - Advanced: fuel alerts with automatic station search and route sending
+- **[examples/core/scripts.yaml](examples/core/scripts.yaml)** - The main TTS script
+- **[examples/core/shell_commands.yaml](examples/core/shell_commands.yaml)** - Shell command for TTS API call
 
-**Advanced scripts:**
-- **[find_best_fuel_station.yaml](examples/find_best_fuel_station.yaml)** - Fuel station finder with TTS announcement and route sending to car (uses French [prix_carburant](https://github.com/Aohzan/hass-prixcarburant) integration by Aohzan - adaptable for other countries)
+### Use cases (ready-to-use examples)
+
+**[⛽ Fuel Alerts](examples/use_cases/fuel_alert/)** - Notify driver about fuel level and recommend nearest/cheapest station
+- [`automation_simple.yaml`](examples/use_cases/fuel_alert/automation_simple.yaml) - Multi-threshold fuel alerts with TTS announcements
+- [`automation_with_station.yaml`](examples/use_cases/fuel_alert/automation_with_station.yaml) - Advanced version with automatic station search and route sending
+- [`find_best_fuel_station.yaml`](examples/use_cases/fuel_alert/find_best_fuel_station.yaml) - Station finder script (uses French [prix_carburant](https://github.com/Aohzan/hass-prixcarburant) integration by Aohzan - adaptable for other countries)
+- 📖 See the [use case README](examples/use_cases/fuel_alert/README.md) for setup details and country adaptations
 
 **⚠️ Remember to replace all placeholders** (`YOUR_PHONE`, `YOUR_EXTERNAL_URL`, `YOUR_LONG_LIVED_TOKEN`, `YOUR_FUEL_LEVEL_SENSOR`, `YOUR_CAR_VIN`, `DRIVER`) with your actual values before using these files.
 
@@ -361,6 +363,8 @@ automation:
         data:
           message: "Don't forget to activate navigation mode"
 ```
+
+For more complete examples, see the [`examples/use_cases/`](examples/use_cases/) directory.
 
 ---
 
@@ -750,7 +754,11 @@ Potential enhancements for future versions:
   - VLC intent method
   - External URL with access token
   - Tested on Mercedes-Benz with Android 14, HAOS 2026.1
+- **v1.1 (June 2026):** Repository reorganization
+  - Renamed to `ha-car-spoken-alerts` for broader scope
+  - Restructured examples into `core/` and `use_cases/`
+  - First use case documented: fuel alerts
 
 ---
 
-**Questions? Issues? Improvements?** Please share your experience in this thread, especially if you test on different vehicle makes/models!
+**Questions? Issues? Improvements?** Please share your experience, especially if you test on different vehicle makes/models!

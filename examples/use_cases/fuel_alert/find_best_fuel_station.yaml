@@ -39,6 +39,8 @@
 # - Finds best fuel station based on strategy
 # - Announces it via TTS through Android Auto
 # - Sends route to car navigation
+# - Gracefully handles errors: if the search fails (no response, empty result,
+#   or API error), announces a fallback message and stops execution
 #
 # ============================================================================
 find_best_fuel_station:
@@ -52,19 +54,40 @@ find_best_fuel_station:
   sequence:
     # Step 1: Search for nearby fuel stations
     # Note: prix_carburant is French-specific. Replace with your country's API.
+    # continue_on_error allows the script to handle API failures gracefully
+    # instead of stopping abruptly with no feedback to the driver.
     - action: prix_carburant.find_nearest_stations
       data:
         entity_id: person.DRIVER  # Replace with your person entity
         fuel: E10  # Fuel type (E10, E85, SP95, SP98, Gazole, etc.)
         distance: "{{ radius }}"
       response_variable: stations_response
+      continue_on_error: true
     
-    # Step 2: Get user's current location
+    # Step 2: Error handling
+    # If the search returned no response, an empty result, or failed,
+    # announce a fallback message and stop the script.
+    - if:
+        - condition: template
+          value_template: >
+            {{ stations_response is not defined
+               or stations_response is none
+               or stations_response.stations is not defined
+               or stations_response.stations | length == 0 }}
+      then:
+        - action: script.tts_android_auto_vlc
+          data:
+            # French message - adapt for your language
+            message: "La recherche de station essence a échoué"
+            # English equivalent: "Fuel station search failed"
+        - stop: "Fuel station search failed - no results returned"
+    
+    # Step 3: Get user's current location
     - variables:
         lat_user: "{{ state_attr('person.DRIVER', 'latitude') }}"
         lon_user: "{{ state_attr('person.DRIVER', 'longitude') }}"
     
-    # Step 3: Select best station based on strategy (returns index)
+    # Step 4: Select best station based on strategy (returns index)
     # Note: We use index instead of object to avoid Jinja2 stringification
     - variables:
         station_idx: >-
@@ -90,11 +113,11 @@ find_best_fuel_station:
             {{ ns.best_idx }}
           {% endif %}
     
-    # Step 4: Retrieve full station object via index
+    # Step 5: Retrieve full station object via index
     - variables:
         station: "{{ stations_response.stations[station_idx | int] }}"
     
-    # Step 5: Extract address components and metadata
+    # Step 6: Extract address components and metadata
     - variables:
         address_parts: "{{ station.address.split(',') }}"
         full_city: "{{ address_parts[-1].strip() if address_parts | length > 1 else '' }}"
@@ -141,7 +164,7 @@ find_best_fuel_station:
           {% endfor %}
           {{ ns.found }}
     
-    # Step 6: Voice announcement via TTS on Android Auto
+    # Step 7: Voice announcement via TTS on Android Auto
     # French message - adapt for your language
     - action: script.tts_android_auto_vlc
       data:
@@ -153,7 +176,7 @@ find_best_fuel_station:
             {{ city }}, station {{ qualif }} trouvée à {{ station_distance }} kilomètres, prix au litre {{ station_price }} euros
           {% endif %}
     
-    # Step 7: Send route to car navigation (Mercedes-Benz example)
+    # Step 8: Send route to car navigation (Mercedes-Benz example)
     # For other vehicles, replace with your car's integration
     - action: mbapi2020.send_route
       data:
